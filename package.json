@@ -4,7 +4,7 @@
   "description": "REST API with Express, Node and MongoDB for movie search service.",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "node app.js",
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint ."
@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/Olimpieva/movies-explorer-api#readme",
   "dependencies": {
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "mongoose": "^6.1.2"
   },
   "devDependencies": {
     "eslint": "^8.5.0",
