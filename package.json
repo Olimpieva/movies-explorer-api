@@ -1,0 +1,32 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "REST API with Express, Node and MongoDB for movie search service.",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Olimpieva/movies-explorer-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Olimpieva/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/Olimpieva/movies-explorer-api#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.5.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "nodemon": "^2.0.15"
+  }
+}
