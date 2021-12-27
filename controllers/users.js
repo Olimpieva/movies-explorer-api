@@ -102,3 +102,16 @@ module.exports.updateUserInfo = async (req, res) => {
     console.log(error);
   }
 };
+
+module.exports.logout = async (req, res) => {
+  try {
+    await res.clearCookie('jwt', {
+      httpOnly: true,
+      sameSite: true,
+    });
+
+    res.status(200).send({ message: 'Выход из системы прошёл успешно.' });
+  } catch (error) {
+    console.log(error);
+  }
+};
