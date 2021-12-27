@@ -39,7 +39,6 @@ module.exports.login = async (req, res) => {
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
-
     console.log(isMatched);
 
     if (!isMatched) {
@@ -51,7 +50,6 @@ module.exports.login = async (req, res) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret',
       { expiresIn: '7d' },
     );
-
     console.log(token);
 
     res.cookie('jwt', token, {

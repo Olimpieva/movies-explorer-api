@@ -11,6 +11,7 @@ const {
   login,
 } = require('./controllers/users');
 const routerUsers = require('./routes/users');
+const routerMovies = require('./routes/movies');
 
 const { PORT = 3000 } = process.env;
 
@@ -36,6 +37,7 @@ app.post(
 app.use(auth);
 
 app.use('/', routerUsers);
+app.use('/', routerMovies);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
