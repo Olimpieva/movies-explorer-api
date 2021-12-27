@@ -1,48 +1,54 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const BadRequestError = require('../errors/bad-request-error');
+const NotFoundError = require('../errors/not-found-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
+const ConflictError = require('../errors/conflict-error');
+const { OK, errorMessages, noticeMessages } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   const { name, email, password } = req.body;
-  console.log(req.body);
 
   try {
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hash });
-    console.log(user);
 
-    // "_id": "61c9e0e916d131e5266541ad",
-
-    res.status(200).send({
+    res.status(OK).send({
       _id: user._id,
       name: user.name,
       email: user.email,
     });
   } catch (error) {
-    console.log(error);
+    let err = error;
+
+    if (error.name === 'ValidationError') {
+      err = new BadRequestError(errorMessages.invalidCreateUserData);
+    }
+    if (error.code === 11000) {
+      err = new ConflictError(errorMessages.userAlreadyExist);
+    }
+
+    next(err);
   }
 };
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log(req.body);
 
   try {
     const user = await User.findOne({ email }).select('+password');
 
-    console.log(user);
-
     if (!user) {
-      return console.log('Error email');
+      throw new UnauthorizedError(errorMessages.invalidAuthUserData);
     }
 
     const isMatched = await bcrypt.compare(password, user.password);
-    console.log(isMatched);
 
     if (!isMatched) {
-      return console.log('Error passsword');
+      throw new UnauthorizedError(errorMessages.invalidAuthUserData);
     }
 
     const token = jwt.sign(
@@ -50,7 +56,6 @@ module.exports.login = async (req, res) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret',
       { expiresIn: '7d' },
     );
-    console.log(token);
 
     res.cookie('jwt', token, {
       maxAge: 3600000,
@@ -58,29 +63,25 @@ module.exports.login = async (req, res) => {
       httpOnly: true,
     });
 
-    res.status(200).json({ token, message: 'Авторизация прошла успешно.' });
+    res.status(OK).json({ token, message: noticeMessages.successLogin });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
+
   return null;
 };
 
 module.exports.getUserInfo = async (req, res) => {
-  console.log(req.user);
   const userId = req.user._id;
+  const userInfo = await User.findById(userId)
+    .orFail(() => {
+      throw new NotFoundError(errorMessages.userNotFound);
+    });
 
-  try {
-    const userInfo = await User.findById(userId)
-      .orFail((error) => console.log(error));
-
-    res.status(200).send(userInfo);
-  } catch (error) {
-    console.log(error);
-  }
+  res.status(OK).send(userInfo);
 };
 
-module.exports.updateUserInfo = async (req, res) => {
-  console.log(req.user);
+module.exports.updateUserInfo = async (req, res, next) => {
   const userId = req.user._id;
   const { name, email } = req.body;
 
@@ -95,23 +96,32 @@ module.exports.updateUserInfo = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    ).orFail((error) => console.log(error));
+    );
 
-    res.status(200).send(updatedUserInfo);
+    res.status(OK).send(updatedUserInfo);
   } catch (error) {
-    console.log(error);
+    let err = error;
+
+    if (error.name === 'ValidationError') {
+      err = new BadRequestError(errorMessages.invalidUpdateUserData);
+    }
+    if (error.code === 11000) {
+      err = new ConflictError(errorMessages.userAlreadyExist);
+    }
+
+    next(err);
   }
 };
 
-module.exports.logout = async (req, res) => {
+module.exports.logout = async (req, res, next) => {
   try {
     await res.clearCookie('jwt', {
       httpOnly: true,
       sameSite: true,
     });
 
-    res.status(200).send({ message: 'Выход из системы прошёл успешно.' });
+    res.status(OK).send({ message: noticeMessages.successLogout });
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
