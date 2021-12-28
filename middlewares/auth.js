@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 
+const UnauthorizedError = require('../errors/unauthorized-error');
+const { errorMessages } = require('../utils/constants');
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 module.exports = (req, res, next) => {
@@ -10,12 +13,12 @@ module.exports = (req, res, next) => {
     try {
       payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'super-strong-secret');
     } catch (error) {
-      return console.log('Переданы некорректные данные при авторизации пользователя.');
+      throw new UnauthorizedError(errorMessages.invalidAuthUserData);
     }
     req.user = payload;
     next();
   } else {
-    console.log('Необходима авторизация.');
+    next(new UnauthorizedError(errorMessages.needAuth));
   }
   return null;
 };

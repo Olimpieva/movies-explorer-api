@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const NotFoundError = require('../errors/not-found-error');
+const { errorMessages } = require('../utils/constants');
 
 const {
   createUser,
@@ -25,6 +27,6 @@ router.use('/users', routerUsers);
 router.use('/movies', routerMovies);
 router.get('/signout', logout);
 
-router.all('*', (req, res) => console.log('Запрашиваемая страница не найдена.'));
+router.all('*', (req, res, next) => next(new NotFoundError(errorMessages.pageNotFound)));
 
 module.exports = router;

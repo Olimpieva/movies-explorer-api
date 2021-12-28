@@ -11,6 +11,7 @@ const errorMessages = {
   invalidCreateMovieData: 'Переданы некорректные данные при создании фильма.',
   noAccess: 'Нет прав для удаления фильма.',
   needAuth: 'Необходима авторизация.',
+  pageNotFound: 'Запрашиваемая страница не найдена.',
 };
 
 const noticeMessages = {

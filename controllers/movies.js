@@ -1,25 +1,22 @@
 const Movie = require('../models/movie');
+const BadRequestError = require('../errors/bad-request-error');
+const NotFoundError = require('../errors/not-found-error');
+const ForbiddenError = require('../errors/forbidden-error');
+const { OK, errorMessages } = require('../utils/constants');
 
-module.exports.getMovies = async (req, res) => {
+module.exports.getMovies = async (req, res, next) => {
   const userId = req.user._id;
-  console.log(userId);
 
   try {
-    const allMovies = await Movie.find({});
-    console.log(allMovies);
+    const savedMovies = await Movie.find({ owner: userId });
 
-    console.log(allMovies);
-
-    const savedMovies = allMovies.filter((movie) => movie.owner.toString() === userId.toString());
-
-    console.log(savedMovies);
-    res.status(200).send(savedMovies);
+    res.status(OK).send(savedMovies);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
 };
 
-module.exports.createMovie = async (req, res) => {
+module.exports.createMovie = async (req, res, next) => {
   const owner = req.user._id;
   const {
     movieId,
@@ -51,34 +48,36 @@ module.exports.createMovie = async (req, res) => {
       owner,
     });
 
-    console.log(movie);
-
-    res.status(200).send(movie);
+    res.status(OK).send(movie);
   } catch (error) {
-    console.log(error);
+    let err = error;
+
+    if (error.name === 'ValidationError') {
+      err = new BadRequestError(errorMessages.invalidCreateMovieData);
+    }
+
+    next(err);
   }
 };
 
-module.exports.removeMovie = async (req, res) => {
+module.exports.removeMovie = async (req, res, next) => {
   const userId = req.user._id;
   const { movieId } = req.params;
 
   try {
     const movie = await Movie.findById(movieId)
-      .orFail((error) => console.log(error));
-
-    console.log(movie.owner.toString);
-    console.log({ userId });
+      .orFail(() => new NotFoundError(errorMessages.movieNotFound));
 
     if (movie.owner.toString() !== userId) {
-      return console.log('You can\'t do that!');
+      throw new ForbiddenError(errorMessages.noAccess);
     }
 
     await movie.remove();
 
-    res.status(200).send(movie);
+    res.status(OK).send(movie);
   } catch (error) {
-    console.log(error);
+    next(error);
   }
+
   return null;
 };

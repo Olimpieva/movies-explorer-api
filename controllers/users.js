@@ -71,14 +71,17 @@ module.exports.login = async (req, res, next) => {
   return null;
 };
 
-module.exports.getUserInfo = async (req, res) => {
+module.exports.getUserInfo = async (req, res, next) => {
   const userId = req.user._id;
-  const userInfo = await User.findById(userId)
-    .orFail(() => {
-      throw new NotFoundError(errorMessages.userNotFound);
-    });
 
-  res.status(OK).send(userInfo);
+  try {
+    const userInfo = await User.findById(userId)
+      .orFail(() => new NotFoundError(errorMessages.userNotFound));
+
+    res.status(OK).send(userInfo);
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports.updateUserInfo = async (req, res, next) => {
@@ -96,7 +99,7 @@ module.exports.updateUserInfo = async (req, res, next) => {
         new: true,
         runValidators: true,
       },
-    );
+    ).orFail(() => new NotFoundError(errorMessages.userNotFound));
 
     res.status(OK).send(updatedUserInfo);
   } catch (error) {
