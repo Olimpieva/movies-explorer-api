@@ -13,6 +13,8 @@ const errorMessages = {
   noAccess: 'Нет прав для удаления фильма.',
   needAuth: 'Необходима авторизация.',
   pageNotFound: 'Запрашиваемая страница не найдена.',
+  tooManyRequests: 'Слишком много запросов с одного адреса. Попробуйте повторить позднее.',
+  tooManyCreateAccountRequests: 'Создано слишком много аккаунтов с одного адреса. Попробуйте повторить позднее.',
 };
 
 const validationErrorMessages = {

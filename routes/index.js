@@ -3,6 +3,7 @@ const router = require('express').Router();
 const NotFoundError = require('../errors/not-found-error');
 const { errorMessages } = require('../utils/constants');
 const { validateLogin, validateCreateUser } = require('../middlewares/validation');
+const { createAccountLimiter } = require('../middlewares/limiter');
 const auth = require('../middlewares/auth');
 const routerUsers = require('./users');
 const routerMovies = require('./movies');
@@ -14,6 +15,7 @@ const {
 
 router.post(
   '/signup',
+  createAccountLimiter,
   validateCreateUser,
   createUser,
 );

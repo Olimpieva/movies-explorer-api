@@ -8,6 +8,7 @@ const { urlServer } = require('./utils/constants');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/error-determinant');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { apiLimiter } = require('./middlewares/limiter');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(requestLogger);
+app.use(apiLimiter);
 
 app.get('/', (req, res) => res.send('It\'s working!'));
 app.use(routes);
