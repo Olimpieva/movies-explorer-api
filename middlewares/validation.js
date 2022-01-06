@@ -23,6 +23,18 @@ module.exports.validateCreateUser = celebrate({
         'any.required': validationErrorMessages.emailRequired,
       }),
     password: Joi.string().required()
+      .custom((value, helpers) => {
+        if (validator.isStrongPassword(value, {
+          minLength: 8,
+          minLowercase: 1,
+          minUppercase: 1,
+          minNumbers: 1,
+          minSymbols: 0,
+        })) {
+          return value;
+        }
+        return helpers.message(validationErrorMessages.passwordNotStrong);
+      })
       .messages({
         'any.required': validationErrorMessages.passwordRequired,
       }),
