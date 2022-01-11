@@ -1,5 +1,13 @@
-const urlServer = 'mongodb://localhost:27017/moviesdb';
 const OK = 200;
+
+const ALLOWED_CORS = [
+  'https://search-save-movie.nomoredomains.rocks',
+  'http://search-save-movie.nomoredomains.rocks',
+  'localhost:3000',
+  'http://localhost:3000',
+];
+
+const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 
 const errorMessages = {
   serverError: 'Произошла ошибка на сервере.',
@@ -48,8 +56,9 @@ const noticeMessages = {
 };
 
 module.exports = {
-  urlServer,
   OK,
+  ALLOWED_CORS,
+  DEFAULT_ALLOWED_METHODS,
   errorMessages,
   validationErrorMessages,
   noticeMessages,
