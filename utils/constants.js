@@ -3,7 +3,6 @@ const OK = 200;
 const ALLOWED_CORS = [
   'https://search-save-movie.nomoredomains.rocks',
   'http://search-save-movie.nomoredomains.rocks',
-  'localhost:3000',
   'http://localhost:3000',
 ];
 
