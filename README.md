@@ -2,8 +2,8 @@
 
 > REST API with Express, Node and MongoDB for movie search service.
 
-Публичный IP-адрес сервера: 62.84.125.42    
-Домен сервера: <https://search-save-movie.nomoredomains.rocks>   
+Публичный IP-адрес сервера: 62.84.127.203     
+Домен сервера: <https://api.search-save-movie.nomoredomains.work>   
 
 ## Запуск проекта
 
