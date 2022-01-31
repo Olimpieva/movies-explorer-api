@@ -1,14 +1,14 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { NODE_ENV, JWT_SECRET } = require('../utils/config');
+const { JWT_SECRET } = require('../utils/config');
 
 const User = require('../models/user');
 const BadRequestError = require('../errors/bad-request-error');
 const NotFoundError = require('../errors/not-found-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
-const { OK, errorMessages, noticeMessages } = require('../utils/constants');
+const { errorMessages, noticeMessages } = require('../utils/constants');
 
 module.exports.createUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -17,7 +17,7 @@ module.exports.createUser = async (req, res, next) => {
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hash });
 
-    res.status(OK).send({
+    res.send({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -54,7 +54,7 @@ module.exports.login = async (req, res, next) => {
 
     const token = jwt.sign(
       { _id: user._id },
-      NODE_ENV === 'production' ? JWT_SECRET : 'I-am-your-super-strong-secret',
+      JWT_SECRET,
       { expiresIn: '7d' },
     );
 
@@ -64,7 +64,7 @@ module.exports.login = async (req, res, next) => {
       httpOnly: true,
     });
 
-    res.status(OK).json({ token, message: noticeMessages.successLogin });
+    res.json({ token, message: noticeMessages.successLogin });
   } catch (error) {
     next(error);
   }
@@ -79,7 +79,7 @@ module.exports.getUserInfo = async (req, res, next) => {
     const userInfo = await User.findById(userId)
       .orFail(() => new NotFoundError(errorMessages.userNotFound));
 
-    res.status(OK).send(userInfo);
+    res.send(userInfo);
   } catch (error) {
     next(error);
   }
@@ -102,7 +102,7 @@ module.exports.updateUserInfo = async (req, res, next) => {
       },
     ).orFail(() => new NotFoundError(errorMessages.userNotFound));
 
-    res.status(OK).send(updatedUserInfo);
+    res.send(updatedUserInfo);
   } catch (error) {
     let err = error;
 
@@ -124,7 +124,7 @@ module.exports.logout = async (req, res, next) => {
       sameSite: true,
     });
 
-    res.status(OK).send({ message: noticeMessages.successLogout });
+    res.send({ message: noticeMessages.successLogout });
   } catch (error) {
     next(error);
   }

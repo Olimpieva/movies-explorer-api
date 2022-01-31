@@ -1,9 +1,8 @@
-const OK = 200;
-
 const ALLOWED_CORS = [
   'https://search-save-movie.nomoredomains.rocks',
   'http://search-save-movie.nomoredomains.rocks',
   'http://localhost:3000',
+  'localhost:3000',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
@@ -55,7 +54,6 @@ const noticeMessages = {
 };
 
 module.exports = {
-  OK,
   ALLOWED_CORS,
   DEFAULT_ALLOWED_METHODS,
   errorMessages,

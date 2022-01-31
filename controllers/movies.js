@@ -2,7 +2,7 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../errors/bad-request-error');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
-const { OK, errorMessages } = require('../utils/constants');
+const { errorMessages } = require('../utils/constants');
 
 module.exports.getMovies = async (req, res, next) => {
   const userId = req.user._id;
@@ -10,7 +10,7 @@ module.exports.getMovies = async (req, res, next) => {
   try {
     const savedMovies = await Movie.find({ owner: userId });
 
-    res.status(OK).send(savedMovies);
+    res.send(savedMovies);
   } catch (error) {
     next(error);
   }
@@ -48,7 +48,7 @@ module.exports.createMovie = async (req, res, next) => {
       owner,
     });
 
-    res.status(OK).send(movie);
+    res.send(movie);
   } catch (error) {
     let err = error;
 
@@ -74,7 +74,7 @@ module.exports.removeMovie = async (req, res, next) => {
 
     await movie.remove();
 
-    res.status(OK).send(movie);
+    res.send(movie);
   } catch (error) {
     next(error);
   }
