@@ -60,8 +60,9 @@ module.exports.login = async (req, res, next) => {
 
     res.cookie('jwt', token, {
       maxAge: 3600000 * 24 * 7,
-      sameSite: true,
+      sameSite: 'None',
       httpOnly: true,
+      secure: true,
     });
 
     res.json({ token, message: noticeMessages.successLogin });
@@ -120,8 +121,9 @@ module.exports.updateUserInfo = async (req, res, next) => {
 module.exports.logout = async (req, res, next) => {
   try {
     await res.clearCookie('jwt', {
+      sameSite: 'None',
       httpOnly: true,
-      sameSite: true,
+      secure: true,
     });
 
     res.send({ message: noticeMessages.successLogout });
